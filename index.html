@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Radiocast Sync</title>
+</head>
+<body>
+  <input id="roomCode" placeholder="Enter Room Code" />
+  <input id="stationUrl" placeholder="Enter Station URL" />
+  <button id="joinBtn">Join Room</button>
+  <button id="changeBtn">Change Station</button>
+  <audio id="radioPlayer" controls autoplay></audio>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const roomCodeInput = document.getElementById('roomCode');
+    const stationUrlInput = document.getElementById('stationUrl');
+    const joinBtn = document.getElementById('joinBtn');
+    const changeBtn = document.getElementById('changeBtn');
+    const radioPlayer = document.getElementById('radioPlayer');
+
+    let roomCode = '';
+
+    joinBtn.addEventListener('click', () => {
+      roomCode = roomCodeInput.value;
+      socket.emit('joinRoom', { roomCode });
+    });
+
+    changeBtn.addEventListener('click', () => {
+      const stationUrl = stationUrlInput.value;
+      socket.emit('changeStation', { roomCode, stationUrl });
+    });
+
+    socket.on('changeStation', (stationUrl) => {
+      radioPlayer.src = stationUrl;
+    });
+  </script>
+</body>
+</html>
